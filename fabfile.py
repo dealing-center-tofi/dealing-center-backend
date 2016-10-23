@@ -19,3 +19,15 @@ def ls():
     run('ls /home')
     with cd('/home'):
         run('ls')
+
+
+@task
+def fetch_files_from_repository():
+    with cd(PROJECT_DIR):
+        run('git fetch')
+        run('git merge origin/master')
+
+
+@task
+def deploy():
+    fetch_files_from_repository()
