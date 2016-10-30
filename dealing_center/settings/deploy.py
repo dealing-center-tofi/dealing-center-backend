@@ -6,3 +6,5 @@ REMOTE_PROJECTS_DIR = '/home/ubuntu/'
 PROJECT_DIR = '%s%s/' % (REMOTE_PROJECTS_DIR, PROJECT_NAME)
 
 REPOSITORY = 'https://github.com/dealing-center-tofi/dealing-center-backend'
+
+ENV_NAME = 'dealing_center'
