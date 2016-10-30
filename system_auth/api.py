@@ -44,7 +44,12 @@ class AuthViewSet(viewsets.GenericViewSet):
         user = self.authenticate_user()
         self.check_object_permissions(request, user)
         user_serializer = SystemUserSerializer(instance=user, context={'request': self.request})
-        headers = {'Token': Token.objects.create(user=user)}
+
+        token = Token.objects.filter(user=user).first()
+        if not token:
+            token = Token.objects.create(user=user)
+        headers = {'Token': token}
+
         return response.Response(
             data=user_serializer.data,
             status=status.HTTP_201_CREATED,
