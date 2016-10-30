@@ -18,7 +18,7 @@ class SystemUserQuerySet(models.QuerySet):
 
 class SystemUser(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=50, unique=True)
-    email = models.CharField(max_length=100, unique=True)
+    email = models.EmailField(max_length=100, unique=True)
 
     first_name = models.CharField(_('first name'), max_length=30)
     last_name = models.CharField(_('last name'), max_length=30)
