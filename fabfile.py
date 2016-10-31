@@ -35,6 +35,12 @@ def migrate():
 
 
 @task
+def install_requirements():
+    with cd(PROJECT_DIR), prefix('workon %s' % ENV_NAME):
+        run('pip install -r requirements.txt')
+
+
+@task
 def restart_gunicorn():
     sudo('systemctl stop gunicorn-dealing_center.service')
     sudo('systemctl start gunicorn-dealing_center.service')
@@ -43,5 +49,6 @@ def restart_gunicorn():
 @task
 def deploy():
     fetch_files_from_repository()
+    install_requirements()
     migrate()
     restart_gunicorn()
