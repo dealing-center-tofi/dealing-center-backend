@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'system_auth',
     'rest_framework',
     'rest_framework.authtoken',
-    'task_app',
 ]
 
 AUTH_USER_MODEL = 'system_auth.SystemUser'

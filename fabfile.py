@@ -41,9 +41,10 @@ def install_requirements():
 
 
 @task
-def restart_gunicorn():
-    sudo('systemctl stop gunicorn-dealing_center.service')
-    sudo('systemctl start gunicorn-dealing_center.service')
+def restart():
+    sudo('service gunicorn-dealing_center restart')
+    sudo('service celeryd-dealing_center restart')
+    sudo('service celerybeat-dealing_center restart')
 
 
 @task
@@ -51,4 +52,10 @@ def deploy():
     fetch_files_from_repository()
     install_requirements()
     migrate()
-    restart_gunicorn()
+    restart()
+
+
+@task
+def stop_celery():
+    sudo('service celeryd-dealing_center stop')
+    sudo('service celerybeat-dealing_center stop')
