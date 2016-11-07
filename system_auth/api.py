@@ -6,7 +6,8 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework import decorators
 
-from . import permissions as app_permissions
+from dealing_center.utils import permissions as app_permissions
+
 from .models import SystemUser
 from .serializers import SystemUserSerializer, EmailLoginSerializer
 

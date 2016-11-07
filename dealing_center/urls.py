@@ -17,9 +17,11 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from system_auth.urls import api_patterns as system_auth_api
+from account.urls import api_patterns as account_api
 
 
-api_patterns = system_auth_api
+api_patterns = system_auth_api + \
+               account_api
 
 
 urlpatterns = [
