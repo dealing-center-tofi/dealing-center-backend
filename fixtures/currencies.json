@@ -1,0 +1,76 @@
+[
+    {
+        "model": "currencies.currency",
+        "pk": 1,
+        "fields": {
+            "name": "USD",
+            "full_name": "United States Dollar"
+        }
+    },
+    {
+        "model": "currencies.currency",
+        "pk": 2,
+        "fields": {
+            "name": "EUR",
+            "full_name": "Euro"
+        }
+    },
+    {
+        "model": "currencies.currency",
+        "pk": 3,
+        "fields": {
+            "name": "BYN",
+            "full_name": "Belarusian ruble new"
+        }
+    },
+    {
+        "model": "currencies.currency",
+        "pk": 4,
+        "fields": {
+            "name": "RUB",
+            "full_name": "Russian ruble"
+        }
+    },
+    {
+        "model": "currencies.currencypair",
+        "pk": 1,
+        "fields": {
+            "base_currency": 2, "quoted_currency": 1
+        }
+    },
+    {
+        "model": "currencies.currencypair",
+        "pk": 2,
+        "fields": {
+            "base_currency": 3, "quoted_currency": 1
+        }
+    },
+    {
+        "model": "currencies.currencypair",
+        "pk": 3,
+        "fields": {
+            "base_currency": 4, "quoted_currency": 1
+        }
+    },
+    {
+        "model": "currencies.currencypair",
+        "pk": 4,
+        "fields": {
+            "base_currency": 2, "quoted_currency": 3
+        }
+    },
+    {
+        "model": "currencies.currencypair",
+        "pk": 5,
+        "fields": {
+            "base_currency": 2, "quoted_currency": 4
+        }
+    },
+    {
+        "model": "currencies.currencypair",
+        "pk": 6,
+        "fields": {
+            "base_currency": 3, "quoted_currency": 4
+        }
+    }
+]

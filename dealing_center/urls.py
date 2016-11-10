@@ -18,10 +18,12 @@ from django.contrib import admin
 
 from system_auth.urls import api_patterns as system_auth_api
 from account.urls import api_patterns as account_api
+from currencies.urls import api_patterns as currencies_api
 
 
 api_patterns = system_auth_api + \
-               account_api
+               account_api + \
+               currencies_api
 
 
 urlpatterns = [
