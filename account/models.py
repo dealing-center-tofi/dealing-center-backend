@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.core import validators
 from django.db import models
 
+from currencies.models import Currency
 from system_auth.models import SystemUser
 
 from .exceptions import NoMoneyValidationError
@@ -10,6 +11,7 @@ from .exceptions import NoMoneyValidationError
 
 class Account(models.Model):
     user = models.OneToOneField(SystemUser)
+    currency = models.ForeignKey(Currency)
     amount = models.FloatField(default=0)
 
     def __unicode__(self):

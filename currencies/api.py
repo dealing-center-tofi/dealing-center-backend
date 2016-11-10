@@ -3,9 +3,16 @@ from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import filters
 
-from .models import CurrencyPair, CurrencyPairValue
-from .serializers import CurrencyPairSerializer, CurrencyPairValueSerializer
+from .models import CurrencyPair, CurrencyPairValue, Currency
+from .serializers import CurrencyPairSerializer, CurrencyPairValueSerializer, CurrencySerializer
 from filters import CurrencyPairValueFilter
+
+
+class CurrencyViewSet(mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CurrencySerializer
+    queryset = Currency.objects.all()
 
 
 class CurrencyPairViewSet(mixins.ListModelMixin,
