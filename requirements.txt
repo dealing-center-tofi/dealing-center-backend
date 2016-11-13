@@ -30,3 +30,8 @@ six==1.10.0
 traitlets==4.3.1
 wcwidth==0.1.7
 whitenoise==3.2.2
+
+tornado
+git+https://github.com/evilkost/brukva
+requests
+redis
