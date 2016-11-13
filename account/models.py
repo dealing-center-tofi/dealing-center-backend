@@ -17,6 +17,12 @@ class Account(models.Model):
     def __unicode__(self):
         return 'Account for %s' % self.user.get_full_name()
 
+    def change_amount_after_order(self, amount):
+        if self.amount + amount < 0:
+            raise NoMoneyValidationError()
+        self.amount += amount
+        self.save()
+
     def change_amount_after_transfer(self, transfer):
         if transfer.transfer_type == Transfer.TRANSFER_TYPE_PUT:
             self.amount += transfer.amount
