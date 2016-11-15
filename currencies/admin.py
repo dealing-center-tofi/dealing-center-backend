@@ -4,7 +4,7 @@ from .models import Currency, CurrencyPair, CurrencyPairValue
 
 
 class CurrencyAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('__unicode__', 'price_to_usd')
 
 
 class CurrencyPairAdmin(admin.ModelAdmin):
@@ -13,6 +13,7 @@ class CurrencyPairAdmin(admin.ModelAdmin):
 
 class CurrencyPairValueAdmin(admin.ModelAdmin):
     list_display = ('currency_pair', 'bid', 'ask', 'creation_time_format')
+    list_filter = ('currency_pair', )
 
     def creation_time_format(self, obj):
         return obj.creation_time.strftime('%Y-%b-%d %H:%M:%S')
