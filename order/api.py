@@ -1,10 +1,14 @@
+from django.utils import timezone
+
 from rest_framework import response
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import decorators
-from django.utils import timezone
+from rest_framework import filters
 from currencies.models import CurrencyPairValue
+from order.filters import OrderFilter
+
 from .serializers import OrderSerializer
 from .models import Order
 
@@ -15,6 +19,8 @@ class OrderViewSet(mixins.CreateModelMixin,
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
+    filter_backends = (filters.DjangoFilterBackend, )
+    filter_class = OrderFilter
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
