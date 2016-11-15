@@ -1,0 +1,10 @@
+[
+    {
+        "model": "dealing_center_settings.setting",
+        "pk": 1,
+        "fields": {
+            "name": "currency_values_generator_period",
+            "value": "{\"seconds\": 10}"
+        }
+    }
+]

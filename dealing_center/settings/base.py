@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'account',
     'currencies',
     'order',
+    'dealing_center_settings',
 ]
 
 AUTH_USER_MODEL = 'system_auth.SystemUser'

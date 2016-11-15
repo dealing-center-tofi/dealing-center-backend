@@ -18,6 +18,10 @@ def generator():
         currency.price_to_usd /= usd_price
         currency.save()
 
+    currencies_for_create = []
     for pair in CurrencyPair.objects.all():
         price = pair.quoted_currency.price_to_usd / pair.base_currency.price_to_usd
-        CurrencyPairValue.objects.create(currency_pair=pair, ask=price * 1.005, bid=price * 0.995)
+        currencies_for_create.append(
+            CurrencyPairValue(currency_pair=pair, ask=price * 1.005, bid=price * 0.995)
+        )
+    CurrencyPairValue.objects.bulk_create(currencies_for_create)

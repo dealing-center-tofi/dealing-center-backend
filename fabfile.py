@@ -41,10 +41,15 @@ def install_requirements():
 
 
 @task
-def restart():
-    sudo('service gunicorn-dealing_center restart')
+def restart_celery():
     sudo('service celeryd-dealing_center restart')
     sudo('service celerybeat-dealing_center restart')
+
+
+@task
+def restart():
+    sudo('service gunicorn-dealing_center restart')
+    restart_celery()
 
 
 @task
