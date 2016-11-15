@@ -1,5 +1,5 @@
 from django.utils import timezone
-
+from django.db import transaction
 from rest_framework import response
 from rest_framework import mixins
 from rest_framework import viewsets
@@ -45,8 +45,9 @@ class OrderViewSet(mixins.CreateModelMixin,
             initial_amount = amount / order.start_value.bid
             debt_amount = initial_amount * end_value.ask
             amount -= debt_amount
-        order.user.account.change_amount_after_order(amount)
-        order.save()
+        with transaction.atomic():
+            order.user.account.change_amount_after_order(amount)
+            order.save()
         serializer = self.serializer_class(order)
         return response.Response(
             data=serializer.data

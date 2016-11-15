@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Order
+from django.db import transaction
 from system_auth.serializers import SystemUserSerializer
 from currencies.serializers import CurrencyPairSerializer, CurrencyPairValueSerializer
 from currencies.models import CurrencyPair, CurrencyPairValue
@@ -32,10 +33,12 @@ class OrderSerializer(serializers.ModelSerializer):
         start_value = CurrencyPairValue.objects.filter(currency_pair=currency_pair).first()
         validated_data['start_value'] = start_value
         if validated_data.get('type') == Order.ORDER_TYPE_LONG:
-            validated_data['user'].account.change_amount_after_order(-amount)
+            with transaction.atomic():
+                validated_data['user'].account.change_amount_after_order(-amount)
             amount /= start_value.ask
         else:
             amount *= start_value.bid
         validated_data['amount'] = amount
-        instance = super(OrderSerializer, self).create(validated_data)
+        with transaction.atomic():
+            instance = super(OrderSerializer, self).create(validated_data)
         return instance

@@ -3,7 +3,7 @@ from .models import Order
 
 
 class OrderAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields = ('start_time',)
 
 
 admin.site.register(Order, OrderAdmin)
