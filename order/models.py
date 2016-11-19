@@ -13,11 +13,11 @@ class Order(models.Model):
         (ORDER_STATUS_CLOSED, 'Closed'),
     )
 
-    ORDER_TYPE_LONG = 1
-    ORDER_TYPE_SHORT = 2
+    ORDER_TYPE_BUY = 1
+    ORDER_TYPE_SELL = 2
     ORDER_TYPE_CHOICES = (
-        (ORDER_TYPE_LONG, 'Long'),
-        (ORDER_TYPE_SHORT, 'Short'),
+        (ORDER_TYPE_BUY, 'buy'),
+        (ORDER_TYPE_SELL, 'sell'),
     )
 
     user = models.ForeignKey(SystemUser)

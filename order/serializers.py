@@ -33,9 +33,8 @@ class OrderSerializer(serializers.ModelSerializer):
         start_value = CurrencyPairValue.objects.filter(currency_pair=currency_pair).first()
         validated_data['start_value'] = start_value
         with transaction.atomic():
-            if validated_data.get('type') == Order.ORDER_TYPE_LONG:
-                validated_data['user'].account.change_amount_after_order(-amount)
-                amount /= start_value.ask
+            if validated_data.get('type') == Order.ORDER_TYPE_BUY:
+                pass
             else:
                 amount *= start_value.bid
             validated_data['amount'] = amount
