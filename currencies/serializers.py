@@ -34,7 +34,7 @@ class CurrencyPairValueSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CurrencyPairValue
-        fields = ('bid', 'ask', 'spread', 'creation_time')
+        fields = ('bid', 'ask', 'spread', 'creation_time', 'currency_pair')
 
     def get_spread(self, pair_value):
-        return pair_value.bid - pair_value.ask
+        return pair_value.ask - pair_value.bid

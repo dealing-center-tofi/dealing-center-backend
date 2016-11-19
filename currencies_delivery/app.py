@@ -17,14 +17,14 @@ if __name__ == '__main__':
     settings = {
         'auto_reload': True,
     }
-    server_port = 8081
+    server_port = 8080
     server = create_websocket_server(
         server_port,
         [(r'/currencies/',
           CurrencyDeliveryHandler,
           {
               'room_controller': RoomController('currencies_delivery'),
-              'api_helper': APIHelper('http://localhost:8000/api/'),
+              'api_helper': APIHelper('http://localhost:8000/api'),
               'app_name': 'currencies_delivery'
           })],
         **settings

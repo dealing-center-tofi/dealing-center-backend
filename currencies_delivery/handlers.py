@@ -13,12 +13,23 @@ class CurrencyDeliveryHandler(WebSocketHandler):
 
     def register_events(self):
         self.events_handlers = {
-            'event': self.just_event,
-            'connect': self.connect_room
+            'authorize': self.authorize,
+            'subscribe': self.subscribe,
+            'unsubscribe': self.unsubscribe
         }
 
-    def just_event(self, data):
-        self.broadcast_to('name', 'event', data)
+    def authorize(self, data):
+        self.api.headers.update({'Authorization': 'Token %s' % data['token']})
+        response = self.api.do_request('GET', '/users/me/')
+        if response.status_code == 200:
+            self.emit('authorized')
+        else:
+            pass
 
-    def connect_room(self, data):
-        self.room_ctrl.join_room('name', self)
+    def subscribe(self, data):
+        print 'subscribed'
+        self.room_ctrl.join_room('delivery', self)
+
+    def unsubscribe(self, data):
+        print 'unsubscribed'
+        self.room_ctrl.leave_room('delivery', self)
