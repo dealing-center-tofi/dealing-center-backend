@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'currencies',
     'order',
     'dealing_center_settings',
+    'corsheaders',
 ]
 
 AUTH_USER_MODEL = 'system_auth.SystemUser'
@@ -59,6 +60,7 @@ AUTH_USER_MODEL = 'system_auth.SystemUser'
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -123,3 +125,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
+
+
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_EXPOSE_HEADERS = ('X-Token', )
