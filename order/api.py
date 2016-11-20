@@ -1,12 +1,13 @@
 from django.utils import timezone
 from django.db import transaction
+from django.db.models import Q
 from rest_framework import response
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework import decorators
 from rest_framework import filters
-from currencies.models import CurrencyPairValue
+from currencies.models import CurrencyPairValue, CurrencyPair
 from order.filters import OrderFilter
 
 from .serializers import OrderSerializer
@@ -39,12 +40,31 @@ class OrderViewSet(mixins.CreateModelMixin,
         order.end_value = end_value
         order.status = Order.ORDER_STATUS_CLOSED
         amount = order.amount
-        if order.type == Order.ORDER_TYPE_LONG:
-            amount *= end_value.bid
+        if order.type == Order.ORDER_TYPE_BUY:
+            debt_amount = amount * order.start_value.ask
+            # if we will make broker! Need to transfer debt_amount from user to broker here.
+            # and delete next line
+            amount -= debt_amount / end_value.bid
+            rest_currency = order.currency_pair.base_currency
         else:
-            initial_amount = amount / order.start_value.bid
-            debt_amount = initial_amount * end_value.ask
-            amount -= debt_amount
+            debt_amount = amount / order.start_value.bid
+            # if we will make broker! Need to transfer debt_amount from user to broker here.
+            # and delete next line
+            amount -= debt_amount * end_value.ask
+            rest_currency = order.currency_pair.quoted_currency
+        user_currency = order.user.account.currency
+        if rest_currency != user_currency:
+            sub_pair = CurrencyPair.objects.get(
+                Q(base_currency=rest_currency,
+                  quoted_currency=user_currency) |
+                Q(base_currency=user_currency,
+                  quoted_currency=rest_currency)
+            )
+            sub_pair = CurrencyPairValue.objects.filter(currency_pair=sub_pair).first()
+            if sub_pair.currency_pair.base_currency == rest_currency:
+                amount *= sub_pair.bid
+            else:
+                amount /= sub_pair.ask
         with transaction.atomic():
             order.user.account.change_amount_after_order(amount)
             order.save()
