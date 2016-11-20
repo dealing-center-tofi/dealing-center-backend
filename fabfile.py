@@ -47,8 +47,14 @@ def restart_celery():
 
 
 @task
+def restart_tornado():
+    sudo('service tornado-dealing_center restart')
+
+
+@task
 def restart():
     sudo('service gunicorn-dealing_center restart')
+    restart_tornado()
     restart_celery()
 
 

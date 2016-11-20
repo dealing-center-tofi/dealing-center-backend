@@ -3,13 +3,13 @@ var initWebsockets = function (url) {
 };
 
 $(document).ready(function () {
-    var ws = initWebsockets("mytest.com/websocket/currencies/");
+    var ws = initWebsockets("dealing-center.westeurope.cloudapp.azure.com/websocket/currencies/");
 
     ws.on('authorized', function () {
         console.log('authorized');
     });
 
-    ws.emit('authorize', {token: '7cb14636254343b210f00901392c22ea7beabf15'});
+    ws.emit('authorize', {token: 'Insert token here...'});
 
     ws.on('client error', function (data) {
         console.log('Client error:', data);
