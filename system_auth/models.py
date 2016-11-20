@@ -2,9 +2,13 @@ from __future__ import unicode_literals
 
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
-
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin
+
+
+def generate():
+    return str(uuid.uuid4())[:50]
 
 
 class SystemUserManager(UserManager):
@@ -17,11 +21,15 @@ class SystemUserQuerySet(models.QuerySet):
 
 
 class SystemUser(AbstractBaseUser, PermissionsMixin):
-    username = models.CharField(max_length=50, unique=True)
+    username = models.CharField(max_length=50, unique=True, default=generate)
     email = models.EmailField(max_length=100, unique=True)
 
     first_name = models.CharField(_('first name'), max_length=30)
+    second_name = models.CharField(_('second name'), max_length=30, null=True, blank=True)
     last_name = models.CharField(_('last name'), max_length=30)
+
+    birth_date = models.DateField(null=True)
+    answer_secret_question = models.CharField(max_length=30, null=True)
 
     is_staff = models.BooleanField(
         _('staff status'),

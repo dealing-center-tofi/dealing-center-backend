@@ -7,7 +7,13 @@ from .models import SystemUser
 
 
 class SystemUserAdmin(UserAdmin):
-    pass
+    fieldsets = UserAdmin.fieldsets[:1] + (
+        ('Personal info',
+         {'fields':
+              ('first_name', 'second_name', 'last_name', 'birth_date', 'email', 'answer_secret_question')
+          }
+         ),
+    ) + UserAdmin.fieldsets[2:]
 
 
 admin.site.register(SystemUser, SystemUserAdmin)

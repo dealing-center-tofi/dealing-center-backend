@@ -16,10 +16,12 @@ class SystemUserSerializer(serializers.ModelSerializer):
         write_only=True,
         required=True
     )
+    birth_date = serializers.DateField()
 
     class Meta:
         model = SystemUser
-        fields = ('id', 'password', 'email', 'username', 'first_name', 'last_name', 'account_currency')
+        fields = ('id', 'password', 'email', 'first_name',
+                  'second_name', 'last_name', 'birth_date', 'answer_secret_question', 'account_currency')
 
     def validate_password(self, value):
         password_validation.validate_password(value, self.instance)
