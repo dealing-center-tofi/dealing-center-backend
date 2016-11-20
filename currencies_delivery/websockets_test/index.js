@@ -3,7 +3,7 @@ var initWebsockets = function (url) {
 };
 
 $(document).ready(function () {
-    var ws = initWebsockets("localhost:8080/currencies/");
+    var ws = initWebsockets("mytest.com/websocket/currencies/");
 
     ws.on('authorized', function () {
         console.log('authorized');

@@ -1,4 +1,9 @@
+import logging
+
 from websocket_app.handlers import WebSocketHandler
+
+
+access_log = logging.getLogger("tornado.access")
 
 
 class CurrencyDeliveryHandler(WebSocketHandler):
@@ -27,9 +32,9 @@ class CurrencyDeliveryHandler(WebSocketHandler):
             pass
 
     def subscribe(self, data):
-        print 'subscribed'
+        access_log.log(logging.DEBUG, 'subscribed: %s' % self)
         self.room_ctrl.join_room('delivery', self)
 
     def unsubscribe(self, data):
-        print 'unsubscribed'
+        access_log.log(logging.DEBUG, 'unsubscribed: %s' % self)
         self.room_ctrl.leave_room('delivery', self)
