@@ -1,21 +1,24 @@
 from .models import Currency, CurrencyPair, CurrencyPairValue
 from random import random
 import json
+from dealing_center_settings.models import Setting
 
 from redis import Redis
 
 from currencies.serializers import CurrencyPairValueSerializer
 
 
-def get_random(m=1, d=0.02, n=12):
+def get_random(m=1, d=0.01, n=12):
     sum_r = sum([random() for _ in xrange(n)])
     return m + (d * (12 / n)**0.5 * (sum_r - n/2))
 
 
 def generator():
+    dispersion = json.loads(Setting.objects.get(name='currency_generator_dispersion').value)
+    print dispersion
     currencies = Currency.objects.all()
     for currency in currencies:
-        currency.price_to_usd *= get_random()
+        currency.price_to_usd *= get_random(d=dispersion['currency_generator_dispersion'])
         if currency.name == 'USD':
             usd_price = currency.price_to_usd
 
