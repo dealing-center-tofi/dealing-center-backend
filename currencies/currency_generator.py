@@ -1,10 +1,10 @@
-from .models import Currency, CurrencyPair, CurrencyPairValue
-from random import random
 import json
-from dealing_center_settings.models import Setting
+from random import random
 
 from redis import Redis
 
+from dealing_center_settings.models import Setting
+from .models import Currency, CurrencyPair, CurrencyPairValue
 from currencies.serializers import CurrencyPairValueSerializer
 
 
@@ -15,7 +15,6 @@ def get_random(m=1, d=0.01, n=12):
 
 def generator():
     dispersion = json.loads(Setting.objects.get(name='currency_generator_dispersion').value)
-    print dispersion
     currencies = Currency.objects.all()
     for currency in currencies:
         currency.price_to_usd *= get_random(d=dispersion['currency_generator_dispersion'])
