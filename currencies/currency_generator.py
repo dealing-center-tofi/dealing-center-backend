@@ -1,5 +1,10 @@
 from .models import Currency, CurrencyPair, CurrencyPairValue
 from random import random
+import json
+
+from redis import Redis
+
+from currencies.serializers import CurrencyPairValueSerializer
 
 
 def get_random(m=1, d=0.02, n=12):
@@ -24,4 +29,11 @@ def generator():
         currencies_for_create.append(
             CurrencyPairValue(currency_pair=pair, ask=price * 1.005, bid=price * 0.995)
         )
-    CurrencyPairValue.objects.bulk_create(currencies_for_create)
+
+    new_currency_pair_values = CurrencyPairValue.objects.bulk_create(currencies_for_create)
+
+    serializer = CurrencyPairValueSerializer(new_currency_pair_values, many=True)
+    data = json.dumps(serializer.data)
+
+    redis_app = Redis()
+    redis_app.publish('tornado-currencies_delivery#delivery#', '["new values", %s]' % data)

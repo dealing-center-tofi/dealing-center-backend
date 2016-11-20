@@ -1,4 +1,5 @@
 import json
+import logging
 
 from redis import Redis
 import tornado.websocket
@@ -6,6 +7,7 @@ import tornado.websocket
 from mixins import RedisAppNameMixin
 
 redis = Redis()
+access_log = logging.getLogger("tornado.access")
 
 
 class WebSocketHandler(RedisAppNameMixin, tornado.websocket.WebSocketHandler):
@@ -16,7 +18,7 @@ class WebSocketHandler(RedisAppNameMixin, tornado.websocket.WebSocketHandler):
         self.register_events()
 
     def open(self, *args):
-        print('Open', self)
+        access_log.log(logging.DEBUG, 'Open: %s' % self)
 
     def on_message(self, message):
         data = json.loads(message)
@@ -28,7 +30,7 @@ class WebSocketHandler(RedisAppNameMixin, tornado.websocket.WebSocketHandler):
             self.emit('client error')
 
     def on_close(self):
-        print 'Disconnected', self
+        access_log.log(logging.DEBUG, 'Disconnected: %s' % self)
 
     def check_origin(self, origin):
         return True
