@@ -33,12 +33,11 @@ class OrderSerializer(serializers.ModelSerializer):
         start_value = CurrencyPairValue.objects.filter(currency_pair=currency_pair).first()
         validated_data['start_value'] = start_value
         user = validated_data.get('user')
-        with transaction.atomic():
-            profit = Order(**validated_data).get_profit(start_value)
-            for order in Order.objects.filter(user=user, status=Order.ORDER_STATUS_OPENED):
-                currency_pair_value = CurrencyPairValue.objects.filter(currency_pair=order.currency_pair).first()
-                profit += order.get_profit(currency_pair_value)
-            if user.account.amount * 0.2 > user.account.amount + profit:
-                raise TooMuchCostsValidationError()
-            instance = super(OrderSerializer, self).create(validated_data)
+        profit = Order(**validated_data).get_profit(start_value)
+        for order in Order.objects.filter(user=user, status=Order.ORDER_STATUS_OPENED):
+            currency_pair_value = CurrencyPairValue.objects.filter(currency_pair=order.currency_pair).first()
+            profit += order.get_profit(currency_pair_value)
+        if user.account.amount * 0.2 > user.account.amount + profit:
+            raise TooMuchCostsValidationError()
+        instance = super(OrderSerializer, self).create(validated_data)
         return instance
