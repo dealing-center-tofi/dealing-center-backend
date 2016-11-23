@@ -44,8 +44,7 @@ class OrderSerializer(serializers.ModelSerializer):
             for order in Order.objects.filter(user=user, status=Order.ORDER_STATUS_OPENED):
                 currency_pair_value = CurrencyPairValue.objects.filter(currency_pair=order.currency_pair).first()
                 profit += order.get_profit(currency_pair_value)
-            print profit * 100
-            if user.account.amount * 0.2 < user.account.amount + profit + 100:
+            if user.account.amount * 0.2 > user.account.amount + profit:
                 raise TooMuchCostsValidationError()
             validated_data['amount'] = amount
             instance = super(OrderSerializer, self).create(validated_data)
