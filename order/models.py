@@ -48,15 +48,10 @@ class Order(models.Model):
         amount = self.amount
         if self.type == self.ORDER_TYPE_BUY:
             debt_amount = amount * self.start_value.ask
-            # if we will make broker! Need to transfer debt_amount from user to broker here.
-            # and delete next line
             amount -= debt_amount / currency_pair_value.bid
             rest_currency = self.currency_pair.base_currency
         else:
-            debt_amount = amount / self.start_value.bid
-            # if we will make broker! Need to transfer debt_amount from user to broker here.
-            # and delete next line
-            amount -= debt_amount * currency_pair_value.ask
+            amount *= (self.start_value.bid - currency_pair_value.ask)
             rest_currency = self.currency_pair.quoted_currency
         user_currency = self.user.account.currency
         if rest_currency != user_currency:
