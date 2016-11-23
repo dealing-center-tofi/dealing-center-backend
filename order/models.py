@@ -1,6 +1,10 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.db import transaction
+from django.db.models import Q
+from django.utils import timezone
+
 from system_auth.models import SystemUser
 from currencies.models import CurrencyPair, CurrencyPairValue
 
@@ -29,6 +33,45 @@ class Order(models.Model):
     end_time = models.DateTimeField(null=True)
     end_value = models.ForeignKey(CurrencyPairValue, related_name='end_value', null=True)
     amount = models.FloatField()
+
+    def close(self):
+        self.end_time = timezone.now()
+        end_value = CurrencyPairValue.objects.filter(currency_pair=self.currency_pair).first()
+        self.end_value = end_value
+        self.status = Order.ORDER_STATUS_CLOSED
+        with transaction.atomic():
+            amount = self.get_profit(end_value)
+            self.user.account.change_amount_after_order(amount)
+            self.save()
+
+    def get_profit(self, currency_pair_value):
+        amount = self.amount
+        if self.type == self.ORDER_TYPE_BUY:
+            debt_amount = amount * self.start_value.ask
+            # if we will make broker! Need to transfer debt_amount from user to broker here.
+            # and delete next line
+            amount -= debt_amount / currency_pair_value.bid
+            rest_currency = self.currency_pair.base_currency
+        else:
+            debt_amount = amount / self.start_value.bid
+            # if we will make broker! Need to transfer debt_amount from user to broker here.
+            # and delete next line
+            amount -= debt_amount * currency_pair_value.ask
+            rest_currency = self.currency_pair.quoted_currency
+        user_currency = self.user.account.currency
+        if rest_currency != user_currency:
+            sub_pair = CurrencyPair.objects.get(
+                Q(base_currency=rest_currency,
+                  quoted_currency=user_currency) |
+                Q(base_currency=user_currency,
+                  quoted_currency=rest_currency)
+            )
+            sub_pair = CurrencyPairValue.objects.filter(currency_pair=sub_pair).first()
+            if sub_pair.currency_pair.base_currency == rest_currency:
+                amount *= sub_pair.bid
+            else:
+                amount /= sub_pair.ask
+        return amount
 
     def __unicode__(self):
         return '%s [%s]: %s' % (self.get_type_display(), self.get_status_display(), self.start_time)
