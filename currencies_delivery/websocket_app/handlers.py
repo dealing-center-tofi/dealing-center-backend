@@ -49,3 +49,6 @@ class WebSocketHandler(RedisAppNameMixin, tornado.websocket.WebSocketHandler):
 
     def register_events(self):
         self.events_handlers = {}
+
+    def raise_client_error(self, msg):
+        self.emit('client error', {'message': msg})

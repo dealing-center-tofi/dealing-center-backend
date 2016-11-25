@@ -11,6 +11,7 @@ class CurrencyDeliveryHandler(WebSocketHandler):
         super(CurrencyDeliveryHandler, self).__init__(application, request, app_name, **kwargs)
         self.room_ctrl = room_controller
         self.api = api_helper
+        self.is_authorized = False
 
     def on_close(self):
         super(CurrencyDeliveryHandler, self).on_close()
@@ -27,14 +28,21 @@ class CurrencyDeliveryHandler(WebSocketHandler):
         self.api.headers.update({'Authorization': 'Token %s' % data['token']})
         response = self.api.do_request('GET', '/users/me/')
         if response.status_code == 200:
+            self.is_authorized = True
             self.emit('authorized')
         else:
             pass
 
     def subscribe(self, data):
-        access_log.log(logging.DEBUG, 'subscribed: %s' % self)
-        self.room_ctrl.join_room('delivery', self)
+        if self.is_authorized:
+            access_log.log(logging.DEBUG, 'subscribed: %s' % self)
+            self.room_ctrl.join_room('delivery', self)
+        else:
+            self.raise_client_error('User is not authorized')
 
     def unsubscribe(self, data):
-        access_log.log(logging.DEBUG, 'unsubscribed: %s' % self)
-        self.room_ctrl.leave_room('delivery', self)
+        if self.is_authorized:
+            access_log.log(logging.DEBUG, 'unsubscribed: %s' % self)
+            self.room_ctrl.leave_room('delivery', self)
+        else:
+            self.raise_client_error('User is not authorized')
