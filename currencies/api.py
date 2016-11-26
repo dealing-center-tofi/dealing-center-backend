@@ -3,6 +3,7 @@ from rest_framework import mixins
 from rest_framework import permissions
 from rest_framework import filters
 
+from dealing_center.utils.pagination import PageSizePagination
 from .models import CurrencyPair, CurrencyPairValue, Currency
 from .serializers import CurrencyPairSerializer, CurrencyPairValueSerializer, CurrencySerializer
 from filters import CurrencyPairValueFilter
@@ -30,3 +31,4 @@ class CurrencyPairValueViewSet(mixins.ListModelMixin,
     queryset = CurrencyPairValue.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = CurrencyPairValueFilter
+    pagination_class = PageSizePagination
