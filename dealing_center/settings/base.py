@@ -120,6 +120,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAdminUser',
     ),
     'PAGE_SIZE': 10,
+    'DEFAULT_PAGINATION_CLASS': 'dealing_center.utils.pagination.AllObjectsPagination',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
     ),
