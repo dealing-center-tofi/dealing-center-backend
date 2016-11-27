@@ -7,6 +7,9 @@ from dealing_center.utils import permissions as app_permissions
 
 from .models import Account, Transfer
 from .serializers import AccountSerializer, TransferSerializer
+from .exceptions import TooMuchCostsValidationError
+from order.models import Order
+from currencies.models import CurrencyPairValue
 
 
 class AccountViewSet(mixins.RetrieveModelMixin,
@@ -33,6 +36,14 @@ class TransferViewSet(mixins.ListModelMixin,
     def perform_create(self, serializer):
         account = self.request.user.account
         with transaction.atomic():
+            if serializer.validated_data.get('transfer_type') == Transfer.TRANSFER_TYPE_WITHDRAW:
+                profit = 0
+                for order in Order.objects.filter(user=account.user, status=Order.ORDER_STATUS_OPENED):
+                    currency_pair_value = CurrencyPairValue.objects.filter(currency_pair=order.currency_pair).first()
+                    profit += order.get_profit(currency_pair_value)
+                balance = account.amount - serializer.validated_data.get('amount')
+                if balance * 0.2 > balance + profit:
+                    raise TooMuchCostsValidationError()
             transfer = serializer.save(account=account)
             account.change_amount_after_transfer(transfer)
 
