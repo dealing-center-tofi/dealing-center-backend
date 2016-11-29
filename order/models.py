@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.db import transaction
+from django.core import validators
 from django.db.models import Q
 from django.utils import timezone
 
@@ -32,7 +33,7 @@ class Order(models.Model):
     start_value = models.ForeignKey(CurrencyPairValue, related_name='start_value')
     end_time = models.DateTimeField(null=True)
     end_value = models.ForeignKey(CurrencyPairValue, related_name='end_value', null=True)
-    amount = models.FloatField()
+    amount = models.FloatField(validators=validators.MinValueValidator(0.01))
 
     def close(self):
         self.end_time = timezone.now()

@@ -4,7 +4,7 @@ from system_auth.serializers import SystemUserSerializer
 from currencies.serializers import CurrencyPairSerializer, CurrencyPairValueSerializer
 from currencies.models import CurrencyPair, CurrencyPairValue
 from .models import Order
-from .exceptions import TooMuchCostsValidationError, IncorrectInputValidationError
+from .exceptions import TooMuchCostsValidationError
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -26,8 +26,6 @@ class OrderSerializer(serializers.ModelSerializer):
                         'end_time': {'read_only': True}}
 
     def create(self, validated_data):
-        if validated_data.get('amount') <= 0:
-            raise IncorrectInputValidationError()
         currency_pair = validated_data.pop('currency_pair_id')
         validated_data['currency_pair'] = currency_pair
         validated_data['status'] = Order.ORDER_STATUS_OPENED
