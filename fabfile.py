@@ -29,6 +29,13 @@ def fetch_files_from_repository():
 
 
 @task
+def fetch_frontend_files_from_repository():
+    with cd(FRONTEND_PROJECT_DIR):
+        run('git fetch')
+        run('git merge origin/master')
+
+
+@task
 def migrate():
     with cd(PROJECT_DIR), prefix('workon %s' % ENV_NAME):
         run('python manage.py migrate')
@@ -70,3 +77,22 @@ def deploy():
 def stop_celery():
     sudo('service celeryd-dealing_center stop')
     sudo('service celerybeat-dealing_center stop')
+
+
+@task
+def install_frontend_requirements():
+    with cd(FRONTEND_PROJECT_DIR):
+        run('npm install')
+
+
+@task
+def build_frontend():
+    with cd(FRONTEND_PROJECT_DIR):
+        run('npm run build')
+
+
+@task
+def deploy_frontend():
+    fetch_frontend_files_from_repository()
+    install_frontend_requirements()
+    build_frontend()
