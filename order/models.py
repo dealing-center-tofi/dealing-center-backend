@@ -42,7 +42,7 @@ class Order(models.Model):
         self.status = Order.ORDER_STATUS_CLOSED
         with transaction.atomic():
             amount = self.get_profit(end_value)
-            self.user.account.change_amount_after_order(amount)
+            self.user.account.change_amount_after_order(amount, raise_exception=False)
             self.save()
 
     def get_profit(self, currency_pair_value):

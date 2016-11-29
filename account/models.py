@@ -17,8 +17,8 @@ class Account(models.Model):
     def __unicode__(self):
         return 'Account for %s' % self.user.get_full_name()
 
-    def change_amount_after_order(self, amount):
-        if self.amount + amount < 0:
+    def change_amount_after_order(self, amount, raise_exception=True):
+        if self.amount + amount < 0 and raise_exception:
             raise NoMoneyValidationError()
         self.amount += amount
         self.save()
