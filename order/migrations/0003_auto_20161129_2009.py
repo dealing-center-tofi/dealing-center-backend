@@ -16,6 +16,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='order',
             name='amount',
-            field=models.FloatField(validators=django.core.validators.MinValueValidator(0.01)),
+            field=models.FloatField(validators=[django.core.validators.MinValueValidator(0.01)]),
         ),
     ]
