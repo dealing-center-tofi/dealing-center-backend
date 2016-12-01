@@ -21,9 +21,9 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'user', 'currency_pair_id', 'currency_pair', 'status', 'type', 'start_time',
-                  'start_value', 'end_time', 'end_value', 'amount')
+                  'start_value', 'end_time', 'end_value', 'end_profit', 'amount')
         extra_kwargs = {'status': {'read_only': True}, 'start_time': {'read_only': True},
-                        'end_time': {'read_only': True}}
+                        'end_time': {'read_only': True}, 'end_profit': {'read_only': True}}
 
     def create(self, validated_data):
         currency_pair = validated_data.pop('currency_pair_id')

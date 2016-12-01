@@ -34,6 +34,7 @@ class Order(models.Model):
     end_time = models.DateTimeField(null=True)
     end_value = models.ForeignKey(CurrencyPairValue, related_name='end_value', null=True)
     amount = models.FloatField(validators=[validators.MinValueValidator(0.01)])
+    end_profit = models.FloatField(null=True, blank=True)
 
     def close(self):
         self.end_time = timezone.now()
@@ -43,6 +44,7 @@ class Order(models.Model):
         with transaction.atomic():
             amount = self.get_profit(end_value)
             self.user.account.change_amount_after_order(amount, raise_exception=False)
+            self.end_profit = amount
             self.save()
 
     def get_profit(self, currency_pair_value):
