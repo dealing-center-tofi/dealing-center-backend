@@ -12,7 +12,7 @@ from filters import CurrencyPairValueFilter, CurrencyPairValueHistoryFilter
 
 class CurrencyViewSet(mixins.ListModelMixin,
                       viewsets.GenericViewSet):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.AllowAny]
     serializer_class = CurrencySerializer
     queryset = Currency.objects.all()
 
