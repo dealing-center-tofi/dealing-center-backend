@@ -1,6 +1,7 @@
 import json
 from random import random
 
+from django.utils import timezone
 from redis import Redis
 
 from dealing_center_settings.models import Setting
@@ -29,7 +30,7 @@ def generator():
     for pair in CurrencyPair.objects.all():
         price = pair.quoted_currency.price_to_usd / pair.base_currency.price_to_usd
         currencies_for_create.append(
-            CurrencyPairValue(currency_pair=pair, ask=price * 1.005, bid=price * 0.995)
+            CurrencyPairValue(currency_pair=pair, ask=price * 1.005, bid=price * 0.995, creation_time=timezone.now())
         )
 
     new_currency_pair_values = CurrencyPairValue.objects.bulk_create(currencies_for_create)

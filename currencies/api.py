@@ -4,9 +4,10 @@ from rest_framework import permissions
 from rest_framework import filters
 
 from dealing_center.utils.pagination import PageSizePagination
-from .models import CurrencyPair, CurrencyPairValue, Currency
-from .serializers import CurrencyPairSerializer, CurrencyPairValueSerializer, CurrencySerializer
-from filters import CurrencyPairValueFilter
+from .models import CurrencyPair, CurrencyPairValue, Currency, CurrencyPairValueHistory
+from .serializers import CurrencyPairSerializer, CurrencyPairValueSerializer, \
+    CurrencySerializer, CurrencyPairValueHistorySerializer
+from filters import CurrencyPairValueFilter, CurrencyPairValueHistoryFilter
 
 
 class CurrencyViewSet(mixins.ListModelMixin,
@@ -32,3 +33,12 @@ class CurrencyPairValueViewSet(mixins.ListModelMixin,
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = CurrencyPairValueFilter
     pagination_class = PageSizePagination
+
+
+class CurrencyPairValueHistoryViewSet(mixins.ListModelMixin,
+                               viewsets.GenericViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = CurrencyPairValueHistorySerializer
+    queryset = CurrencyPairValueHistory.objects.all()
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = CurrencyPairValueHistoryFilter
