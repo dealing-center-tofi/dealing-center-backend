@@ -42,3 +42,4 @@ class CurrencyPairValueHistoryViewSet(mixins.ListModelMixin,
     queryset = CurrencyPairValueHistory.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = CurrencyPairValueHistoryFilter
+    pagination_class = PageSizePagination
