@@ -80,9 +80,9 @@ def create_history_from_generator(values_generator, chunk_size=50):
     for history_value in values_generator:
         current_values_array.append(history_value)
         if len(current_values_array) == chunk_size:
-            CurrencyPairValueHistory.objects.bulk_create(current_values_array)
+            print len(CurrencyPairValueHistory.objects.bulk_create(current_values_array))
             current_values_array = []
-    CurrencyPairValueHistory.objects.bulk_create(current_values_array)
+    print len(CurrencyPairValueHistory.objects.bulk_create(current_values_array))
 
 
 def generate_history_for_currency_pair(pair):
@@ -94,4 +94,8 @@ def generate_history_for_currency_pair(pair):
 
             values_generator = currency_history_generator(pair, period, last_value_creation_time)
             if values_generator:
-                create_history_from_generator(values_generator, 50)
+                create_history_from_generator(values_generator)
+                print 'Created for period %s and pair %s' % (period, pair.id)
+            else:
+                print 'Empty for period %s and pair %s' % (period, pair.id)
+        print '-------------'
