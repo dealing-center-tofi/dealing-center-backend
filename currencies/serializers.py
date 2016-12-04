@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Currency, CurrencyPair, CurrencyPairValue
+from .models import Currency, CurrencyPair, CurrencyPairValue, CurrencyPairValueHistory
 
 
 class CurrencySerializer(serializers.ModelSerializer):
@@ -38,3 +38,10 @@ class CurrencyPairValueSerializer(serializers.ModelSerializer):
 
     def get_spread(self, pair_value):
         return pair_value.ask - pair_value.bid
+
+
+class CurrencyPairValueHistorySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CurrencyPairValueHistory
+        fields = ('open', 'close', 'high', 'low', 'period', 'creation_time', 'currency_pair')
