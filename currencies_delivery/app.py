@@ -32,6 +32,7 @@ if __name__ == '__main__':
           CurrencyDeliveryHandler,
           {
               'room_controller': RoomController('currencies_delivery'),
+              'orders_room_controller': RoomController('orders_closing_delivery'),
               'api_helper': APIHelper('http://localhost:8000/api'),
               'app_name': 'currencies_delivery'
           })],

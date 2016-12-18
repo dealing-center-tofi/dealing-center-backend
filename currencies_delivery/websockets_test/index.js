@@ -17,7 +17,13 @@ $(document).ready(function () {
 
     ws.emit('subscribe');
 
+    ws.emit('orders_closing_subscribe');
+
     ws.on('new values', function (data) {
+        console.log(data);
+    });
+
+    ws.on('order closed', function (data) {
         console.log(data);
     });
 
