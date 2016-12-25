@@ -39,3 +39,5 @@ tornado
 git+https://github.com/evilkost/brukva
 requests
 redis
+
+django-environ

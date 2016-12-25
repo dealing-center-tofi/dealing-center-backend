@@ -1,10 +1,14 @@
 from __future__ import unicode_literals
 
+from django.contrib.auth.tokens import default_token_generator
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.utils.translation import ugettext_lazy as _
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, UserManager, PermissionsMixin
+from django.core.mail import send_mail
 
 
 def generate():
@@ -63,3 +67,12 @@ class SystemUser(AbstractBaseUser, PermissionsMixin):
 
     def get_short_name(self):
         return self.first_name
+
+    def send_recovery_password_mail(self):
+        url = 'http://dealing-center.westeurope.cloudapp.azure.com/#/app/recovery-password/{uidb}/{token}/'.format(
+            uidb=urlsafe_base64_encode(force_bytes(self.pk)),
+            token=default_token_generator.make_token(self)
+        )
+        send_mail('Password recovery', None,
+                  'dealing.center.tofi@gmail.com', [self.email],
+                  html_message='For recovery password go to <a href="%s">link</a>' % url)

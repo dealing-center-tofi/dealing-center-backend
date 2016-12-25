@@ -14,6 +14,11 @@ import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import dj_database_url
+import environ
+
+
+env = environ.Env(DEBUG=(bool, False),)  # set default values and casting
+environ.Env.read_env()  # reading .env file
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -129,5 +134,9 @@ REST_FRAMEWORK = {
 
 
 CORS_ORIGIN_ALLOW_ALL = True
-
 CORS_EXPOSE_HEADERS = ('Token', )
+
+
+EMAIL_CONFIG = env.email_url('EMAIL_URL', default='smtp://user:pwd@smtp.gmail.com:587')
+vars().update(EMAIL_CONFIG)
+EMAIL_USE_TLS = True

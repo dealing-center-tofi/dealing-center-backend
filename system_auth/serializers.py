@@ -1,6 +1,9 @@
 from django.contrib.auth import authenticate, password_validation
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.tokens import default_token_generator
 from django.db import transaction
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 from rest_framework.settings import api_settings
 
@@ -46,3 +49,33 @@ class EmailLoginSerializer(serializers.Serializer):
                 api_settings.NON_FIELD_ERRORS_KEY: ['wrong email or password'],
             })
         return user
+
+
+class RecoveryPasswordByEmailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
+
+    class Meta:
+        fields = ['email']
+        model = SystemUser
+
+
+class RecoveryPasswordSerializer(serializers.Serializer):
+    uidb64 = serializers.CharField(max_length=255)
+    token = serializers.CharField(max_length=255)
+    password = serializers.CharField(write_only=True, required=True)
+
+    class Meta:
+        fields = ('password', 'token', 'uidb64', )
+
+    def validate(self, validated_data):
+        uid = force_text(urlsafe_base64_decode(validated_data.get('uidb64')))
+        user = SystemUser.objects.filter(pk=uid).first()
+        if not user:
+            raise serializers.ValidationError('Bad uidb64')
+        if not default_token_generator.check_token(user, validated_data.get('token')):
+            raise serializers.ValidationError('Bad token')
+        return validated_data
+
+    def validate_password(self, value):
+        password_validation.validate_password(value, self.instance)
+        return make_password(value)

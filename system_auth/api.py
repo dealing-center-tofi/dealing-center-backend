@@ -1,3 +1,5 @@
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework import response
@@ -9,7 +11,8 @@ from rest_framework import decorators
 from dealing_center.utils import permissions as app_permissions
 
 from .models import SystemUser
-from .serializers import SystemUserSerializer, EmailLoginSerializer
+from .serializers import SystemUserSerializer, EmailLoginSerializer, RecoveryPasswordByEmailSerializer, \
+    RecoveryPasswordSerializer
 
 
 class SystemUserViewSet(mixins.CreateModelMixin,
@@ -66,3 +69,26 @@ class AuthViewSet(viewsets.GenericViewSet):
     def logout(self, request):
         request.auth.delete()
         return response.Response(None, status=status.HTTP_204_NO_CONTENT)
+
+    @decorators.list_route(methods=['post'], permission_classes=[permissions.AllowAny])
+    def password_recovery(self, request, **kwargs):
+        serializer = RecoveryPasswordByEmailSerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        try:
+            user = SystemUser.objects.get(email__iexact=serializer.validated_data.get('email'))
+            user.send_recovery_password_mail()
+        except SystemUser.DoesNotExist:
+            pass
+        return response.Response()
+
+    @decorators.list_route(methods=['post'], permission_classes=[permissions.AllowAny])
+    def password_recovery_confirm(self, request, **kwargs):
+        serializer = RecoveryPasswordSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        uid = force_text(urlsafe_base64_decode(serializer.validated_data['uidb64']))
+        user = SystemUser.objects.get(pk=uid)
+        user.password = serializer.validated_data['password']
+        user.save()
+
+        return response.Response(status=status.HTTP_200_OK)
