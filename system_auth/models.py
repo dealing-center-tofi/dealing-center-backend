@@ -69,7 +69,7 @@ class SystemUser(AbstractBaseUser, PermissionsMixin):
         return self.first_name
 
     def send_recovery_password_mail(self):
-        url = 'http://dealing-center.westeurope.cloudapp.azure.com/#/app/recovery-password/{uidb}/{token}/'.format(
+        url = 'http://dealing-center.westeurope.cloudapp.azure.com/#/password-recovery-confirm/{uidb}/{token}/'.format(
             uidb=urlsafe_base64_encode(force_bytes(self.pk)),
             token=default_token_generator.make_token(self)
         )
