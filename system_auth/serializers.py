@@ -9,7 +9,7 @@ from rest_framework.settings import api_settings
 
 from account.models import Account
 from currencies.models import Currency
-from .models import SystemUser
+from .models import SystemUser, SecretQuestion
 
 
 class SystemUserSerializer(serializers.ModelSerializer):
@@ -79,3 +79,9 @@ class RecoveryPasswordSerializer(serializers.Serializer):
     def validate_password(self, value):
         password_validation.validate_password(value, self.instance)
         return make_password(value)
+
+
+class SecretQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SecretQuestion
+        fields = ('question_text', )

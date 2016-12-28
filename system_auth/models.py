@@ -33,6 +33,7 @@ class SystemUser(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(_('last name'), max_length=30)
 
     birth_date = models.DateField(null=True)
+    secret_question = models.ForeignKey('SecretQuestion', null=True)
     answer_secret_question = models.CharField(max_length=30, null=True)
 
     is_staff = models.BooleanField(
@@ -76,3 +77,10 @@ class SystemUser(AbstractBaseUser, PermissionsMixin):
         send_mail('Password recovery', None,
                   'dealing.center.tofi@gmail.com', [self.email],
                   html_message='For recovery password go to <a href="%s">link</a>' % url)
+
+
+class SecretQuestion(models.Model):
+    question_text = models.CharField(max_length=500)
+
+    def __unicode__(self):
+        return self.question_text

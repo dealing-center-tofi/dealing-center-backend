@@ -10,9 +10,9 @@ from rest_framework import decorators
 
 from dealing_center.utils import permissions as app_permissions
 
-from .models import SystemUser
+from .models import SystemUser, SecretQuestion
 from .serializers import SystemUserSerializer, EmailLoginSerializer, RecoveryPasswordByEmailSerializer, \
-    RecoveryPasswordSerializer
+    RecoveryPasswordSerializer, SecretQuestionSerializer
 
 
 class SystemUserViewSet(mixins.CreateModelMixin,
@@ -92,3 +92,10 @@ class AuthViewSet(viewsets.GenericViewSet):
         user.save()
 
         return response.Response(status=status.HTTP_200_OK)
+
+
+class SecretQuestionViewSet(mixins.ListModelMixin,
+                            viewsets.GenericViewSet):
+    permission_classes = [permissions.AllowAny]
+    serializer_class = SecretQuestionSerializer
+    queryset = SecretQuestion.objects.all().order_by('?')
