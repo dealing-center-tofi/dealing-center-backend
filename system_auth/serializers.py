@@ -12,6 +12,12 @@ from currencies.models import Currency
 from .models import SystemUser, SecretQuestion
 
 
+class SecretQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SecretQuestion
+        fields = ('question_text', )
+
+
 class SystemUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True)
     account_currency = serializers.PrimaryKeyRelatedField(
@@ -20,11 +26,20 @@ class SystemUserSerializer(serializers.ModelSerializer):
         required=True
     )
     birth_date = serializers.DateField()
+    secret_question = SecretQuestionSerializer(read_only=True)
+    secret_question_id = serializers.PrimaryKeyRelatedField(
+        queryset=SecretQuestion.objects.all(),
+        write_only=True,
+        required=True,
+        source='secret_question'
+    )
 
     class Meta:
         model = SystemUser
         fields = ('id', 'password', 'email', 'first_name',
-                  'second_name', 'last_name', 'birth_date', 'answer_secret_question', 'account_currency')
+                  'second_name', 'last_name', 'birth_date',
+                  'secret_question', 'secret_question_id',
+                  'answer_secret_question', 'account_currency')
 
     def validate_password(self, value):
         password_validation.validate_password(value, self.instance)
@@ -79,9 +94,3 @@ class RecoveryPasswordSerializer(serializers.Serializer):
     def validate_password(self, value):
         password_validation.validate_password(value, self.instance)
         return make_password(value)
-
-
-class SecretQuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = SecretQuestion
-        fields = ('question_text', )
