@@ -15,7 +15,7 @@ from .models import SystemUser, SecretQuestion
 class SecretQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = SecretQuestion
-        fields = ('question_text', )
+        fields = ('id', 'question_text', )
 
 
 class SystemUserSerializer(serializers.ModelSerializer):
