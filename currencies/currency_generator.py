@@ -16,6 +16,7 @@ def get_random(m=1, d=0.01, n=12):
 
 def generator():
     dispersion = json.loads(Setting.objects.get(name='currency_generator_dispersion').value)
+    spread_settings = json.loads(Setting.objects.get(name='spread_settings').value)
     currencies = Currency.objects.all()
     for currency in currencies:
         currency.price_to_usd *= get_random(d=dispersion['currency_generator_dispersion'])
@@ -29,7 +30,7 @@ def generator():
     currencies_for_create = []
     for pair in CurrencyPair.objects.all():
         price = pair.quoted_currency.price_to_usd / pair.base_currency.price_to_usd
-        spread = get_spread()
+        spread = get_spread(**spread_settings)
         currencies_for_create.append(CurrencyPairValue(currency_pair=pair, creation_time=timezone.now(),
                                                        ask=price + spread / 2, bid=price - spread / 2))
 
@@ -42,5 +43,5 @@ def generator():
     redis_app.publish('tornado-currencies_delivery#delivery#', '["new values", %s]' % data)
 
 
-def get_spread():
-    return random.randint(15, 25) / 10000.
+def get_spread(spread_range, divider):
+    return random.randint(*spread_range) / float(divider)
