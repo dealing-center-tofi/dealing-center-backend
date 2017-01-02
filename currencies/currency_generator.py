@@ -1,5 +1,5 @@
 import json
-from random import random
+import random
 
 from django.utils import timezone
 from redis import Redis
@@ -10,7 +10,7 @@ from currencies.serializers import CurrencyPairValueSerializer
 
 
 def get_random(m=1, d=0.01, n=12):
-    sum_r = sum([random() for _ in xrange(n)])
+    sum_r = sum([random.random() for _ in xrange(n)])
     return m + (d * (12 / n)**0.5 * (sum_r - n/2))
 
 
@@ -29,9 +29,9 @@ def generator():
     currencies_for_create = []
     for pair in CurrencyPair.objects.all():
         price = pair.quoted_currency.price_to_usd / pair.base_currency.price_to_usd
-        currencies_for_create.append(
-            CurrencyPairValue(currency_pair=pair, ask=price * 1.005, bid=price * 0.995, creation_time=timezone.now())
-        )
+        spread = get_spread()
+        currencies_for_create.append(CurrencyPairValue(currency_pair=pair, creation_time=timezone.now(),
+                                                       ask=price + spread / 2, bid=price - spread / 2))
 
     new_currency_pair_values = CurrencyPairValue.objects.bulk_create(currencies_for_create)
 
@@ -40,3 +40,7 @@ def generator():
 
     redis_app = Redis()
     redis_app.publish('tornado-currencies_delivery#delivery#', '["new values", %s]' % data)
+
+
+def get_spread():
+    return random.randint(15, 25) / 10000.
